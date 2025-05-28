@@ -43,6 +43,29 @@ module.exports = {
           foreground: withOpacity('card-foreground'),
         },
       },
+      fontFamily: {
+        // Poppins
+        'poppins-thin': ['Poppins-Thin'],
+        'poppins-extralight': ['Poppins-ExtraLight'],
+        'poppins-light': ['Poppins-Light'],
+        'poppins-regular': ['Poppins-Regular'],
+        'poppins-medium': ['Poppins-Medium'],
+        'poppins-semibold': ['Poppins-SemiBold'],
+        'poppins-bold': ['Poppins-Bold'],
+        'poppins-extrabold': ['Poppins-ExtraBold'],
+        'poppins-black': ['Poppins-Black'],
+
+        // DM Sans
+        'dmsans-thin': ['DMSans-Thin'],
+        'dmsans-extralight': ['DMSans-ExtraLight'],
+        'dmsans-light': ['DMSans-Light'],
+        'dmsans-regular': ['DMSans-Regular'],
+        'dmsans-medium': ['DMSans-Medium'],
+        'dmsans-semibold': ['DMSans-SemiBold'],
+        'dmsans-bold': ['DMSans-Bold'],
+        'dmsans-extrabold': ['DMSans-ExtraBold'],
+        'dmsans-black': ['DMSans-Black'],
+      },
       borderWidth: {
         hairline: hairlineWidth(),
       },
