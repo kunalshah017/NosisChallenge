@@ -1,6 +1,6 @@
 import { Pressable, View, TextInput } from 'react-native';
 import { cn } from '~/lib/cn';
-
+import { usePathname } from 'expo-router';
 import { useColorScheme } from '~/lib/useColorScheme';
 
 import { Text } from '~/components/nativewindui/Text';
@@ -9,14 +9,26 @@ import LogoIcon from '~/assets/svg/logo-icon.svg';
 import ProfileIcon from '~/assets/svg/profile-icon.svg';
 import SearchIcon from '~/assets/svg/search-icon.svg';
 
-type TabName = 'Home' | 'Explore' | 'Library';
+type TabName = 'Home' | 'Explore' | 'Library' | 'Nosis';
 
 interface HeaderProps {
-    currentTab: TabName;
+    currentTab?: TabName;
 }
 
-export default function Header({ currentTab }: HeaderProps) {
+export default function Header({ currentTab: propCurrentTab }: HeaderProps) {
     const { colors } = useColorScheme();
+    const pathname = usePathname();
+
+    // Determine current tab based on pathname
+    const getCurrentTab = (): TabName => {
+        if (pathname.startsWith('/explore')) return 'Explore';
+        if (pathname.startsWith('/library') || pathname.startsWith('/details')) return 'Library';
+        if (pathname.startsWith('/')) return 'Home';
+        return 'Nosis';
+    };
+
+    // Use prop if provided, otherwise determine from route
+    const currentTab = propCurrentTab || getCurrentTab();
 
     return (
         <View className="w-full flex flex-row items-center justify-between my-3">
