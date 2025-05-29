@@ -5,6 +5,7 @@
 @layer base {
   :root {
     /* Light theme */
+    --light-background: 253 252 252; /* n50 */
     --background: 244 237 231; /* b50 */
     --foreground: 50 31 24; /* d300 */
     --card: 255 255 255; /* white */
@@ -26,6 +27,7 @@
     --ring: 238 229 223; /* n300 */
 
     /* Android specific colors */
+    --android-light-background: 253 252 252; /* n50 */
     --android-background: 244 237 231; /* b50 */
     --android-foreground: 50 31 24; /* d300 */
     --android-card: 255 255 255; /* white */
@@ -50,6 +52,7 @@
   @media (prefers-color-scheme: dark) {
     :root {
       /* Dark theme */
+      --light-background: 31 19 15; /* d500 */
       --background: 31 19 15; /* d500 */
       --foreground: 253 252 252; /* n50 */
       --card: 85 69 63; /* d200 */
@@ -71,6 +74,7 @@
       --ring: 85 69 63; /* d200 */
 
       /* Android dark theme */
+      --android-light-background: 31 19 15; /* d500 */
       --android-background: 31 19 15; /* d500 */
       --android-foreground: 253 252 252; /* n50 */
       --android-card: 85 69 63; /* d200 */
@@ -92,4 +96,18 @@
       --android-ring: 85 69 63; /* d200 */
     }
   }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

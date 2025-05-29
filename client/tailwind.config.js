@@ -12,6 +12,7 @@ module.exports = {
         border: withOpacity('border'),
         input: withOpacity('input'),
         ring: withOpacity('ring'),
+        lightBackground: withOpacity('light-background'),
         background: withOpacity('background'),
         foreground: withOpacity('foreground'),
         primary: {
