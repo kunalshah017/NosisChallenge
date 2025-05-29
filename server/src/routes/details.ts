@@ -37,6 +37,32 @@ bookDetails.get("/:id", async (c) => {
     const info = data.volumeInfo;
     const readingTime = calculateReadingTime(info.pageCount);
 
+    const processCategories = (categories: string[] | undefined): string[] => {
+      if (!categories || !Array.isArray(categories)) return [];
+
+      const allCategories = categories
+        .flatMap((cat) => cat.split("/"))
+        .map((cat) => cat.trim())
+        .filter((cat) => cat.length > 0);
+
+      return [...new Set(allCategories)];
+    };
+
+    const stripHtmlTags = (html: string | undefined): string | undefined => {
+      if (!html) return html;
+
+      return html
+        .replace(/<[^>]*>/g, "") // Remove HTML tags
+        .replace(/&nbsp;/g, " ") // Replace &nbsp; with regular space
+        .replace(/&amp;/g, "&") // Replace &amp; with &
+        .replace(/&lt;/g, "<") // Replace &lt; with <
+        .replace(/&gt;/g, ">") // Replace &gt; with >
+        .replace(/&quot;/g, '"') // Replace &quot; with "
+        .replace(/&#39;/g, "'") // Replace &#39; with '
+        .replace(/\s+/g, " ") // Replace multiple spaces with single space
+        .trim(); // Remove leading/trailing whitespace
+    };
+
     // Try to get recommendations
     let recommendations: BookResponse[] = [];
     if (info.categories?.length) {
@@ -61,9 +87,9 @@ bookDetails.get("/:id", async (c) => {
               readingTime: calculateReadingTime(vi.pageCount),
               rank: 0,
               weeksOnList: 0,
-              description: vi.description?.slice(0, 300),
+              description: stripHtmlTags(vi.description)?.slice(0, 300),
               pageCount: vi.pageCount,
-              categories: vi.categories,
+              categories: processCategories(vi.categories),
               publishedDate: vi.publishedDate,
             };
           })
@@ -78,13 +104,9 @@ bookDetails.get("/:id", async (c) => {
         title: info.title,
         authors: info.authors || [],
         highResCover:
-          info.imageLinks?.extraLarge ||
-          info.imageLinks?.large ||
-          info.imageLinks?.thumbnail ||
-          info.imageLinks?.smallThumbnail ||
-          "",
-        description: info.description,
-        categories: info.categories || [],
+          info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || "",
+        description: stripHtmlTags(info.description),
+        categories: processCategories(info.categories),
         readingTime,
         pageCount: info.pageCount,
         publishedDate: info.publishedDate,
