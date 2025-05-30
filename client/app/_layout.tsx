@@ -68,6 +68,8 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" options={headerOptions} />
             <Stack.Screen name="details/[id]" options={headerOptions} />
             <Stack.Screen name="read/index" options={headerOptions} />
+            <Stack.Screen name="listen/index" options={headerOptions} />
+            <Stack.Screen name="preferences/index" options={headerOptions} />
           </Stack>
         </NavThemeProvider>
       </PersistQueryClientProvider>
