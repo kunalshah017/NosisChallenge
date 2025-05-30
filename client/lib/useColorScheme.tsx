@@ -22,7 +22,6 @@ function useColorScheme() {
     setNativeWindColorScheme(effectiveColorScheme);
   }, [effectiveColorScheme, setNativeWindColorScheme]);
 
-
   return {
     colorScheme: effectiveColorScheme,
     isDarkColorScheme: effectiveColorScheme === 'dark',
@@ -47,7 +46,8 @@ function setNavigationBar(colorScheme: 'light' | 'dark') {
   return Promise.all([
     NavigationBar.setButtonStyleAsync(colorScheme === 'dark' ? 'light' : 'dark'),
     NavigationBar.setPositionAsync('absolute'),
-    NavigationBar.setBackgroundColorAsync(colorScheme === 'dark' ? '#00000030' : '#ffffff80'),
+    NavigationBar.setBackgroundColorAsync('transparent'), // Make it fully transparent
+    NavigationBar.setBehaviorAsync('overlay-swipe'), // Allow content to render behind nav bar
   ]);
 }
 

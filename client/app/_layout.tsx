@@ -6,7 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-
+import { Platform } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
@@ -22,7 +23,6 @@ export {
 } from 'expo-router';
 
 export default function RootLayout() {
-
   useInitialAndroidBarSync();
 
   const { colorScheme, isDarkColorScheme } = useColorScheme();
@@ -30,12 +30,19 @@ export default function RootLayout() {
 
   const SCREEN_OPTIONS = {
     animation: 'ios_from_right',
+    headerShown: false, // We'll handle headers manually with SafeAreaView
   } as const;
 
   const headerOptions = {
     headerShown: true,
-    headerTitle: (props: any) => <Header {...props} />,
+    header: (props: any) => <Header {...props} />,
     headerBackVisible: false,
+    headerStyle: {
+      backgroundColor: isDarkColorScheme ? '#1f130f' : '#f4ede7', // Match your background colors
+    },
+    headerSafeAreaInsets: {
+      top: Platform.OS === 'android' ? 0 : undefined,
+    },
   } as const;
 
   useEffect(() => {
@@ -49,7 +56,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <SafeAreaProvider>
       <PersistQueryClientProvider
         client={queryClient}
         persistOptions={{
@@ -61,6 +68,8 @@ export default function RootLayout() {
         <StatusBar
           key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
           style={isDarkColorScheme ? 'light' : 'dark'}
+          backgroundColor="transparent"
+          translucent={Platform.OS === 'android'}
         />
 
         <NavThemeProvider value={NAV_THEME[colorScheme]}>
@@ -73,7 +82,6 @@ export default function RootLayout() {
           </Stack>
         </NavThemeProvider>
       </PersistQueryClientProvider>
-    </>
+    </SafeAreaProvider>
   );
 }
-

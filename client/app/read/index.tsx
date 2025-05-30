@@ -320,7 +320,7 @@ export default function ReadingScreen() {
             )}
 
             {/* Bottom Reading Info Bar */}
-            <View className={`px-5 py-3 pb-9 flex-row justify-between items-center ${headerBgColor} border-t ${controlBorderColor}`}>
+            <View className={`px-5 py-3 pb-3 flex-row justify-between items-center ${headerBgColor} border-t ${controlBorderColor}`}>
                 <View>
                     <Text className={`font-dmsans-regular text-xs ${isDarkMode ? 'text-stone-400' : 'text-stone-500'}`}>
                         {Math.floor(overallProgress() * 100)}% complete

@@ -361,7 +361,7 @@ const ListeningScreen = () => {
             )}
 
             {/* Audio Player UI */}
-            <View className="flex-1 justify-center px-6 pb-10 bg-card border-t border dark:border-gray-700">
+            <View className="flex-1 justify-center px-6 pb-5 bg-card border-t border dark:border-gray-700">
                 {/* Book Info */}
                 <View className="items-center mb-6">
                     <View className="w-32 h-32 bg-primary/20 rounded-xl items-center justify-center mb-4">
