@@ -1,11 +1,14 @@
 import React, { useRef, useState, useMemo, useCallback } from 'react';
 import { View, Text, Pressable, Image, ScrollView } from 'react-native';
-import { useTopBooks } from '~/lib/api';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+
+import { Book } from '~/types/api';
+import { BookmarkBook } from '~/store/useBookmarksStore';
 
 interface BookCarouselProps {
     title: string;
-    period: 'week' | 'month' | 'random';
+    books: Book[] | undefined | BookmarkBook[];
+    isLoading?: boolean;
     onBookPress?: (bookId: string) => void;
 }
 
@@ -54,8 +57,8 @@ const SkeletonLoader = React.memo(() => {
     );
 });
 
-const BookCarousel = React.memo<BookCarouselProps>(({ title, period, onBookPress }) => {
-    const { data: books, isLoading } = useTopBooks(period);
+const BookCarousel = React.memo<BookCarouselProps>(({ title, books, onBookPress, isLoading }) => {
+
     const scrollViewRef = useRef<ScrollView>(null);
     const [currentScrollX, setCurrentScrollX] = useState(0);
 
@@ -163,11 +166,13 @@ const BookCarousel = React.memo<BookCarouselProps>(({ title, period, onBookPress
                 scrollEventThrottle={16}
             >
                 {books.map((book) => (
-                    <BookItem
-                        key={book.id}
-                        book={book}
-                        onPress={onBookPress}
-                    />
+                    book.coverImage && (
+                        <BookItem
+                            key={book.id}
+                            book={book}
+                            onPress={onBookPress}
+                        />
+                    )
                 ))}
             </ScrollView>
         </View>
