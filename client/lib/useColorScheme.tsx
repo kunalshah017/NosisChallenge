@@ -1,33 +1,32 @@
 import * as NavigationBar from 'expo-navigation-bar';
 import { useColorScheme as useNativewindColorScheme } from 'nativewind';
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, useColorScheme as useSystemColorScheme } from 'react-native';
 
 import { COLORS } from '~/theme/colors';
+import { usePreferencesStore } from '~/store/usePreferencesStore';
 
 function useColorScheme() {
-  const { colorScheme, setColorScheme: setNativeWindColorScheme } = useNativewindColorScheme();
+  const { setColorScheme: setNativeWindColorScheme } = useNativewindColorScheme();
+  const systemColorScheme = useSystemColorScheme();
+  const { themeMode } = usePreferencesStore();
 
-  async function setColorScheme(colorScheme: 'light' | 'dark') {
-    setNativeWindColorScheme(colorScheme);
-    if (Platform.OS !== 'android') return;
-    try {
-      await setNavigationBar(colorScheme);
-    } catch (error) {
-      console.error('useColorScheme.tsx", "setColorScheme', error);
+  const effectiveColorScheme = React.useMemo(() => {
+    if (themeMode === 'system') {
+      return systemColorScheme ?? 'light';
     }
-  }
+    return themeMode === 'dark' ? 'dark' : 'light';
+  }, [themeMode, systemColorScheme]);
 
-  function toggleColorScheme() {
-    return setColorScheme(colorScheme === 'light' ? 'dark' : 'light');
-  }
+  React.useEffect(() => {
+    setNativeWindColorScheme(effectiveColorScheme);
+  }, [effectiveColorScheme, setNativeWindColorScheme]);
+
 
   return {
-    colorScheme: colorScheme ?? 'light',
-    isDarkColorScheme: colorScheme === 'dark',
-    setColorScheme,
-    toggleColorScheme,
-    colors: COLORS[colorScheme ?? 'light'],
+    colorScheme: effectiveColorScheme,
+    isDarkColorScheme: effectiveColorScheme === 'dark',
+    colors: COLORS[effectiveColorScheme],
   };
 }
 
@@ -44,8 +43,6 @@ function useInitialAndroidBarSync() {
   }, [colorScheme]);
 }
 
-export { useColorScheme, useInitialAndroidBarSync };
-
 function setNavigationBar(colorScheme: 'light' | 'dark') {
   return Promise.all([
     NavigationBar.setButtonStyleAsync(colorScheme === 'dark' ? 'light' : 'dark'),
@@ -53,3 +50,5 @@ function setNavigationBar(colorScheme: 'light' | 'dark') {
     NavigationBar.setBackgroundColorAsync(colorScheme === 'dark' ? '#00000030' : '#ffffff80'),
   ]);
 }
+
+export { useColorScheme, useInitialAndroidBarSync };
