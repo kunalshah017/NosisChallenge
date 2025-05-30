@@ -1,0 +1,44 @@
+name: EAS Build Preview
+
+on:
+  push:
+    branches:
+      - preview-release
+
+jobs:
+  build-android-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: EAS build Android APK
+        working-directory: client
+        run: |
+          eas build --platform android --profile preview --non-interactive --json > build.json
+        env:
+          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
+
+      - name: Get build URL
+        run: echo "BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)" >> $GITHUB_ENV
+
+      - name: Download APK from Expo
+        run: curl -o client/NosisChallenge.apk "$BUILD_URL"
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: 'Preview APK Build'
+          tag_name: preview-latest
+          files: client/NosisChallenge.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
