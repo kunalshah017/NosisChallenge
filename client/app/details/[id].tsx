@@ -4,6 +4,9 @@ import { useBookDetails } from '~/lib/api';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 
+import { useBookmarksStore } from '~/store/useBookmarksStore';
+import { useAuthStore } from '~/store/useAuthStore';
+
 // Skeleton loading component
 const SkeletonLoading = () => {
     return (
@@ -65,18 +68,30 @@ export default function BookDetailsScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { data: book, isLoading, error } = useBookDetails(id!);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+    const { addBookmark, removeBookmark, isBookmarked } = useBookmarksStore();
+    const { isSignedIn } = useAuthStore();
 
     const handleGoBack = () => {
         router.back();
     };
 
-    const handleStartReading = () => {
-        router.push('/read');
-    };
-
     const toggleDescription = () => {
         setIsDescriptionExpanded(!isDescriptionExpanded);
     };
+
+    const handleBookmark = () => {
+        if (isBookmarked(id!)) {
+            removeBookmark(id!);
+        } else if (book) {
+            addBookmark({
+                id: id!,
+                title: book?.title,
+                author: book?.authors.join(", "),
+                coverImage: book?.highResCover,
+            });
+        }
+    }
+
 
     if (isLoading) {
         return <SkeletonLoading />;
@@ -208,12 +223,13 @@ export default function BookDetailsScreen() {
                             className="pb-4"
                         >
                             {book.recommendations.slice(0, 5).map((item, i) => (
-                                <TouchableOpacity key={i} className="mr-4 w-28"
+                                <TouchableOpacity key={i} className="mr-20 w-28"
                                     onPress={() => router.push(`/details/${item.id}`)}
                                 >
                                     <Image
                                         source={{ uri: item.coverImage }}
-                                        className="w-28 h-40 rounded-md mb-2"
+                                        className="w-44 h-72 rounded-md mb-2"
+                                        resizeMode="cover"
                                     />
                                     <Text className="font-dmsans-medium" numberOfLines={2}>{item.title}</Text>
                                     <Text className="text-xs text-stone-500 font-dmsans-regular">{item.authorName.split(", ")[0]}</Text>
@@ -233,19 +249,25 @@ export default function BookDetailsScreen() {
 
             {/* Bottom Action Buttons */}
             <View className="fixed bottom-0 left-0 right-0 flex-row px-4 py-3 pb-7 bg-stone-50 border-t border-stone-200">
-                <TouchableOpacity className="w-16 h-16 rounded-[14px] bg-stone-200 justify-center items-center">
-                    <Ionicons name="bookmark-outline" size={22} color="#333" />
-                </TouchableOpacity>
+                {
+                    isSignedIn && (
+                        <TouchableOpacity
+                            onPress={handleBookmark}
+                            className="w-16 h-16 rounded-[14px] bg-stone-200 justify-center items-center">
+                            <Ionicons name={isBookmarked(book.id) ? "bookmark" : "bookmark-outline"} size={22} color="#333" />
+                        </TouchableOpacity>
+                    )
+                }
                 <TouchableOpacity
                     className="flex-1 flex-row gap-3 ml-3 h-16 bg-green-800 rounded-[14px] justify-center items-center"
-                    onPress={handleStartReading}
+                    onPress={() => router.push('/read')}
                 >
                     <Text className="text-white text-base font-dmsans-medium">Start Reading</Text>
                     <Ionicons name="book-outline" size={20} color="#fff" className='pt-1' />
                 </TouchableOpacity>
                 <TouchableOpacity
                     className="flex-1 flex-row gap-3 ml-3 h-16 bg-green-800 rounded-[14px] justify-center items-center"
-                    onPress={handleStartReading}
+                    onPress={() => router.push('/listen')}
                 >
                     <Text className="text-white text-base font-dmsans-medium">Listen</Text>
                     <Ionicons name="play-outline" size={20} color="#fff" />
