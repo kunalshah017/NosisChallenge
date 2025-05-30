@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { successResponse, errorResponse } from "../utils/response";
 import type { Env } from "../types/env";
-import { calculateReadingTime } from "../utils/helpers";
+import { calculateReadingTime, convertToHttps } from "../utils/helpers";
 
 const bookDetails = new Hono<{ Bindings: Env }>();
 
@@ -81,8 +81,9 @@ bookDetails.get("/:id", async (c) => {
             return {
               id: item.id,
               title: vi.title,
-              coverImage:
-                vi.imageLinks?.thumbnail || vi.imageLinks?.smallThumbnail || "",
+              coverImage: convertToHttps(
+                vi.imageLinks?.thumbnail || vi.imageLinks?.smallThumbnail
+              ),
               authorName: vi.authors?.join(", ") || "Unknown",
               readingTime: calculateReadingTime(vi.pageCount),
               rank: 0,
@@ -103,8 +104,9 @@ bookDetails.get("/:id", async (c) => {
         id,
         title: info.title,
         authors: info.authors || [],
-        highResCover:
-          info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || "",
+        highResCover: convertToHttps(
+          info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail
+        ),
         description: stripHtmlTags(info.description),
         categories: processCategories(info.categories),
         readingTime,

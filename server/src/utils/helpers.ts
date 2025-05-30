@@ -17,3 +17,10 @@ export const calculateReadingTime = (pageCount?: number): string => {
     return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
   }
 };
+
+// ...existing code...
+
+export const convertToHttps = (url: string | undefined): string => {
+  if (!url) return "";
+  return url.replace(/^http:\/\//, "https://");
+};

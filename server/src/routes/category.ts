@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { successResponse, errorResponse } from "../utils/response";
 import type { Env } from "../types/env";
-import { calculateReadingTime } from "../utils/helpers";
+import { calculateReadingTime, convertToHttps } from "../utils/helpers";
 
 const category = new Hono<{ Bindings: Env }>();
 
@@ -47,8 +47,9 @@ category.get("/:category", async (c) => {
       return {
         id: item.id,
         title: info.title,
-        coverImage:
-          info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || "",
+        coverImage: convertToHttps(
+          info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail
+        ),
         authorName: info.authors?.join(", ") || "Unknown",
         readingTime: calculateReadingTime(info.pageCount),
         rank: 0,

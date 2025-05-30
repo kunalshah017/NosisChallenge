@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { successResponse, errorResponse } from "../utils/response";
 import type { Env } from "../types/env";
-import { calculateReadingTime } from "../utils/helpers";
+import { calculateReadingTime, convertToHttps } from "../utils/helpers";
 
 const topBooks = new Hono<{ Bindings: Env }>();
 
@@ -141,10 +141,10 @@ topBooks.get("/week", async (c) => {
       const enrichedBook: BookResponse = {
         id: googleDetails?.id || "",
         title: googleDetails?.title || book.title,
-        coverImage:
+        coverImage: convertToHttps(
           googleDetails?.imageLinks?.thumbnail ||
-          googleDetails?.imageLinks?.smallThumbnail ||
-          "",
+            googleDetails?.imageLinks?.smallThumbnail
+        ),
         authorName: googleDetails?.authors?.join(", ") || book.author,
         readingTime: calculateReadingTime(googleDetails?.pageCount),
         rank: book.rank,
@@ -227,10 +227,10 @@ topBooks.get("/month", async (c) => {
       const enrichedBook: BookResponse = {
         id: googleDetails?.id || "",
         title: googleDetails?.title || book.title,
-        coverImage:
+        coverImage: convertToHttps(
           googleDetails?.imageLinks?.thumbnail ||
-          googleDetails?.imageLinks?.smallThumbnail ||
-          "",
+            googleDetails?.imageLinks?.smallThumbnail
+        ),
         authorName: googleDetails?.authors?.join(", ") || book.author,
         readingTime: calculateReadingTime(googleDetails?.pageCount),
         rank: book.rank,
@@ -301,8 +301,9 @@ topBooks.get("/random", async (c) => {
       return {
         id: item.id,
         title: info.title,
-        coverImage:
-          info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || "",
+        coverImage: convertToHttps(
+          info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail
+        ),
         authorName: info.authors?.join(", ") || "Unknown",
         readingTime: calculateReadingTime(info.pageCount),
         rank: 0,
