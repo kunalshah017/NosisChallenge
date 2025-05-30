@@ -23,6 +23,7 @@ export default function Header({ currentTab: propCurrentTab }: HeaderProps) {
     const getCurrentTab = (): TabName => {
         if (pathname.startsWith('/explore')) return 'Explore';
         if (pathname.startsWith('/library') || pathname.startsWith('/details')) return 'Library';
+        if (pathname.startsWith('/read')) return 'Nosis';
         if (pathname.startsWith('/')) return 'Home';
         return 'Nosis';
     };

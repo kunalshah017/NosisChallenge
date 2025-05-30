@@ -71,8 +71,7 @@ export default function BookDetailsScreen() {
     };
 
     const handleStartReading = () => {
-        // Handle start reading action
-        console.log('Start reading:', id);
+        router.push('/read');
     };
 
     const toggleDescription = () => {
@@ -238,10 +237,18 @@ export default function BookDetailsScreen() {
                     <Ionicons name="bookmark-outline" size={22} color="#333" />
                 </TouchableOpacity>
                 <TouchableOpacity
-                    className="flex-1 ml-3 h-16 bg-green-800 rounded-[14px] justify-center items-center"
+                    className="flex-1 flex-row gap-3 ml-3 h-16 bg-green-800 rounded-[14px] justify-center items-center"
                     onPress={handleStartReading}
                 >
                     <Text className="text-white text-base font-dmsans-medium">Start Reading</Text>
+                    <Ionicons name="book-outline" size={20} color="#fff" className='pt-1' />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    className="flex-1 flex-row gap-3 ml-3 h-16 bg-green-800 rounded-[14px] justify-center items-center"
+                    onPress={handleStartReading}
+                >
+                    <Text className="text-white text-base font-dmsans-medium">Listen</Text>
+                    <Ionicons name="play-outline" size={20} color="#fff" />
                 </TouchableOpacity>
             </View>
         </>
