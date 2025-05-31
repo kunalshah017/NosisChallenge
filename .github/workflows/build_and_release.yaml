@@ -32,11 +32,18 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EAS_TOKEN }}
 
-      - name: Get build URL
-        run: echo "BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' client/build.json)" >> $GITHUB_ENV
+      - name: Extract Build URL
+        id: extract-url
+        run: |
+          echo "BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' client/build.json)" >> $GITHUB_ENV
+          echo "::set-output name=url::$(jq -r '.[0].artifacts.buildUrl' client/build.json)"
 
       - name: Download APK from Expo
-        run: curl -o client/NosisChallenge.apk "$BUILD_URL"
+        working-directory: client
+        run: |
+          eas build:download --latest --platform android --profile preview --output NosisChallenge.apk
+        env:
+          EXPO_TOKEN: ${{ secrets.EAS_TOKEN }}
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v1
@@ -44,5 +51,9 @@ jobs:
           name: "Preview APK Build"
           tag_name: preview-latest
           files: client/NosisChallenge.apk
+          body: |
+            ✅ New preview build is available!
+
+            👉 [Download APK](${{ steps.extract-url.outputs.url }})
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
