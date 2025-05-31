@@ -17,17 +17,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "pnpm"
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install project dependencies using pnpm
-        working-directory: client
-        run: pnpm install
 
       - name: Install EAS CLI globally
-        run: pnpm add -g eas-cli
+        run: npm install -g eas-cli
+
+      - name: Install project dependencies
+        working-directory: client
+        run: npm install
 
       - name: EAS build Android APK
         working-directory: client
