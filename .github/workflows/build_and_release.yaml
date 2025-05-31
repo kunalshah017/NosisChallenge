@@ -17,9 +17,17 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: "pnpm"
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install project dependencies using pnpm
+        working-directory: client
+        run: pnpm install
+
+      - name: Install EAS CLI globally
+        run: pnpm add -g eas-cli
 
       - name: EAS build Android APK
         working-directory: client
@@ -29,7 +37,7 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EAS_TOKEN }}
 
       - name: Get build URL
-        run: echo "BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)" >> $GITHUB_ENV
+        run: echo "BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' client/build.json)" >> $GITHUB_ENV
 
       - name: Download APK from Expo
         run: curl -o client/NosisChallenge.apk "$BUILD_URL"
